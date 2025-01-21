@@ -1,3 +1,5 @@
+// complex_queries.cql
+
 // Find groups that are closely connected (high weight)
 MATCH (g1:Group)-[r:CONNECTED_TO]->(g2:Group)
 WHERE r.weight > 10
@@ -53,3 +55,32 @@ MATCH (m1:Member)-[:PARTICIPATES_IN]->(g:Group)<-[:PARTICIPATES_IN]-(m2:Member)
 WHERE m1 <> m2 AND NOT (m1)-[:FRIEND_OF]-(m2)
 RETURN m1.member_id, m2.member_id, COUNT(g) AS shared_groups
 ORDER BY shared_groups DESC LIMIT 10;
+
+// Members participating in at least 2 groups connected to "Code for Nashville"
+MATCH (g:Group {group_name: "Code for Nashville"})-[:CONNECTED_TO*1..2]-(relatedGroup:Group)
+WITH COLLECT(DISTINCT relatedGroup) AS connectedGroups
+UNWIND connectedGroups AS group
+MATCH (m:Member)-[:PARTICIPATES_IN]->(group)
+WITH m, COUNT(DISTINCT group) AS groupCount
+WHERE groupCount >= 2
+RETURN m.member_id, m.name;
+
+// Combine event attendees and group participants, then filter
+CALL {
+  MATCH (m:Member)-[:ATTENDED]->(e:Event)
+  RETURN m, e
+  UNION
+  MATCH (m:Member)-[:PARTICIPATES_IN]->(g:Group)
+  RETURN m, g AS e
+}
+WITH m, COLLECT(e) AS activities
+WHERE SIZE(activities) > 5
+RETURN m.member_id, m.name, SIZE(activities) AS total_activities;
+
+// Groups where all members attended at least one event
+MATCH (g:Group)<-[:PARTICIPATES_IN]-(m:Member)
+WITH g, COLLECT(m) AS members
+WHERE ALL(m IN members WHERE EXISTS((m)-[:ATTENDED]->(:Event)))
+RETURN g.group_id, g.group_name;
+
+

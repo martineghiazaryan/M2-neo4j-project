@@ -1,3 +1,6 @@
+// basic_queries.cql
+
+
 // Find members without attended events
 MATCH (m:Member)
 OPTIONAL MATCH (m)-[:ATTENDED]->(e:Event)
@@ -51,3 +54,14 @@ LIMIT 10;
 // View a specific relationship between members and groups
 MATCH (m:Member)-[r:PARTICIPATES_IN]->(g:Group)
 RETURN m, r, g LIMIT 10;
+
+
+// Find members with more than 5 total activities (events + groups combined)
+CALL {
+  MATCH (m:Member)-[:ATTENDED]->(e:Event) RETURN m, e
+  UNION
+  MATCH (m:Member)-[:PARTICIPATES_IN]->(g:Group) RETURN m, g AS e
+}
+WITH m, COLLECT(e) AS activities
+WHERE SIZE(activities) > 5
+RETURN m.member_id
