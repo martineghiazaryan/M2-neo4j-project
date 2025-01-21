@@ -180,3 +180,196 @@ RETURN g1.group_name, g2.group_name LIMIT 10;
 2. If errors occur during import, verify the CSV file formatting and ensure no missing headers or unexpected data types.
 
 By following these instructions, you will successfully import your dataset into Neo4j and set up your graph database for analysis.
+
+
+# PostgreSQL Setup and Queries
+
+## Step 1: Install PostgreSQL
+1. Download PostgreSQL from [https://www.postgresql.org/download/](https://www.postgresql.org/download/)
+2. Run the installer and follow the steps:
+   - **Select components:** Ensure you install `pgAdmin` and `Command Line Tools`.
+   - **Set a password:** When prompted, set a password for the default `postgres` user (remember this password).
+   - **Set port:** By default, PostgreSQL runs on port `5432` (keep default or change as needed).
+
+---
+
+## Step 2: Start PostgreSQL Server
+
+1. **Open Command Prompt as Administrator** (Windows `Win + X > Command Prompt (Admin)`).
+2. Navigate to the PostgreSQL `bin` directory:
+   ```cmd
+   cd "C:\\Program Files\\PostgreSQL\\17\\bin"
+   ```
+   _(Replace `17` with your installed PostgreSQL version if different.)_
+3. **Start the PostgreSQL server:**
+   ```cmd
+   pg_ctl -D "C:\\Program Files\\PostgreSQL\\17\\data" start
+   ```
+   - If you see a message like `server started`, PostgreSQL is running.
+   - If you get an error about the database already running, check for existing processes.
+
+---
+
+## Step 3: Stop PostgreSQL Server (If Needed)
+
+To stop the running PostgreSQL service, use:
+```cmd
+pg_ctl -D "C:\\Program Files\\PostgreSQL\\17\\data" stop
+```
+
+---
+
+## Step 4: Connect to PostgreSQL Using `psql`
+
+1. Open **Command Prompt** and navigate to PostgreSQL `bin` directory:
+   ```cmd
+   cd "C:\\Program Files\\PostgreSQL\\17\\bin"
+   ```
+2. Connect to PostgreSQL with the default user:
+   ```cmd
+   psql -U postgres
+   ```
+   - If prompted, enter the password you set during installation.
+   - If you see the PostgreSQL prompt (`postgres=#`), the connection is successful.
+
+---
+
+## Step 5: Create and Connect to the `meetup_graph` Database
+
+1. **Create the database:**
+   ```sql
+   CREATE DATABASE meetup_graph;
+   ```
+2. **Connect to the database:**
+   ```cmd
+   \c meetup_graph
+   ```
+   You should see: `You are now connected to database "meetup_graph"`.
+
+---
+
+## Step 6: Execute SQL Queries
+
+Once inside PostgreSQL (`meetup_graph=#` prompt), run your queries step by step:
+
+```sql
+DROP TABLE IF EXISTS members CASCADE;
+DROP TABLE IF EXISTS groups CASCADE;
+DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS member_to_group CASCADE;
+DROP TABLE IF EXISTS member_edges CASCADE;
+DROP TABLE IF EXISTS group_edges CASCADE;
+DROP TABLE IF EXISTS rsvps CASCADE;
+```
+
+```sql
+CREATE TABLE members (
+    member_id VARCHAR PRIMARY KEY,
+    name VARCHAR,
+    hometown VARCHAR,
+    city VARCHAR,
+    state VARCHAR,
+    lat FLOAT,
+    lon FLOAT
+);
+```
+
+```sql
+CREATE TABLE groups (
+    group_id VARCHAR PRIMARY KEY,
+    group_name VARCHAR,
+    num_members INTEGER,
+    category_id VARCHAR,
+    category_name VARCHAR,
+    organizer_id VARCHAR,
+    group_urlname VARCHAR
+);
+```
+
+```sql
+CREATE TABLE events (
+    event_id VARCHAR PRIMARY KEY,
+    group_id VARCHAR REFERENCES groups(group_id),
+    name VARCHAR
+);
+```
+
+```sql
+CREATE TABLE member_to_group (
+    member_id VARCHAR REFERENCES members(member_id),
+    group_id VARCHAR REFERENCES groups(group_id),
+    weight INTEGER
+);
+```
+
+```sql
+CREATE TABLE member_edges (
+    member1 VARCHAR REFERENCES members(member_id),
+    member2 VARCHAR REFERENCES members(member_id),
+    weight INTEGER
+);
+```
+
+```sql
+CREATE TABLE group_edges (
+    group1 VARCHAR REFERENCES groups(group_id),
+    group2 VARCHAR REFERENCES groups(group_id),
+    weight INTEGER
+);
+```
+
+```sql
+CREATE TABLE rsvps (
+    event_id VARCHAR REFERENCES events(event_id),
+    member_id VARCHAR REFERENCES members(member_id),
+    group_id VARCHAR REFERENCES groups(group_id)
+);
+```
+
+---
+
+## Step 7: Import Data from CSV Files
+
+```sql
+\COPY members(member_id, name, hometown, city, state, lat, lon) FROM 'datasets/meta-members.csv' WITH CSV HEADER;
+```
+
+```sql
+\COPY groups(group_id, group_name, num_members, category_id, category_name, organizer_id, group_urlname) FROM 'datasets/meta-groups.csv' WITH CSV HEADER;
+```
+
+```sql
+\COPY events(event_id, group_id, name) FROM 'datasets/meta-events.csv' WITH CSV HEADER;
+```
+
+```sql
+\COPY member_to_group(member_id, group_id, weight) FROM 'datasets/member-to-group-edges.csv' WITH CSV HEADER;
+```
+
+```sql
+\COPY member_edges(member1, member2, weight) FROM 'datasets/member-edges.csv' WITH CSV HEADER;
+```
+
+```sql
+\COPY group_edges(group1, group2, weight) FROM 'datasets/group-edges.csv' WITH CSV HEADER;
+```
+
+```sql
+\COPY rsvps(event_id, member_id, group_id) FROM 'datasets/rsvps.csv' WITH CSV HEADER;
+```
+
+---
+
+## Step 8: Validate the Data
+
+```sql
+SELECT COUNT(*) FROM members;
+SELECT COUNT(*) FROM groups;
+SELECT COUNT(*) FROM events;
+```
+
+```sql
+SELECT * FROM members LIMIT 5;
+SELECT * FROM groups LIMIT 5;
+SELECT * FROM events LIMIT 5;
+```
