@@ -1,70 +1,59 @@
+import gradio as gr
 import openai
-from config import OPENAI_API_KEY, OPENAI_MODEL
+import pandas as pd
 from database import run_cypher_query
+from llm import generate_cypher_query, generate_results_summary
+
+css = """
+    body { background-color: #1e1e1e; color: white; }
+    .gradio-container { font-family: Arial, sans-serif; }
+"""
+
+handshake_logo = "img/handshake.jpg"
 
 def graphRAG_query(nl_query):
     """
-    Converts a natural language query to Cypher, executes it, and formats the output using GPT-4o-mini.
+    Converts a natural language query to Cypher, executes it, and formats the output.
     """
-    from llm import generate_cypher_query
-
-    # 🔹 Step 1: Convert NL query to Cypher
     cypher_query = generate_cypher_query(nl_query, context=None)
     if not cypher_query:
-        return "❌ Failed to generate a valid Cypher query."
+        return {"error": "Failed to generate a valid Cypher query."}, None
 
-    print(f"DEBUG: Generated Cypher query:\n{cypher_query}\n")
-
-    # 🔹 Step 2: Execute Cypher query in Neo4j
     results = run_cypher_query(cypher_query)
-
     if not results:
-        return "🔍 No results found for this query."
-
-    # 🔹 Step 3: Send results to GPT-4o-mini for formatting
-    openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)
+        return {"message": "No results found."}, None, cypher_query
     
-    prompt = f"""
-    You are an AI assistant that formats Neo4j query results into **readable text**.
-    The user executed the following query:
-    ```
-    {cypher_query}
-    ```
+    df = pd.DataFrame(results)
+    return results, df, cypher_query
 
-    The results are structured as a list of JSON objects. Each object may contain:
-    - `Group`: `group_id`, `group_name`, `num_members`, `category_name`
-    - `Member`: `member_id`, `name`
-    - `Event`: `event_id`, `name`
-    - `Friendship`: Member `FRIEND_OF` another member
-    - `Participation`: Member `PARTICIPATES_IN` a group
-    - `RSVP`: Member `ATTENDED` an event
+def format_query_results(nl_query):
+    results, df, cypher_query = graphRAG_query(nl_query)
+    summary = generate_results_summary(results)
+    return results, df, cypher_query, summary
 
-    Format the output as **clear, readable text**. Use:
-    - 📌 **Bold Titles**
-    - ✅ **Bullet Points**
-    - 🔗 **Clickable Links (if available)**
-    - 🔄 **Emoji-based labels**
-    
-    **Query Results:** 
-    ```json
-    {results}
-    ```
-    """
-
-    try:
-        response = openai_client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=[
-                {"role": "system", "content": "You are a formatting assistant that formats database results into clear, structured text."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0  # Ensure deterministic formatting
-        )
+def build_interface():
+    with gr.Blocks(css=css, theme=gr.themes.Base()) as demo:
+        with gr.Row():
+            gr.Image(handshake_logo, label="Integration", show_label=False, width=200, height=100)
         
-        formatted_output = response.choices[0].message.content.strip()
-        return formatted_output
-    
-    except Exception as e:
-        print(f"ERROR: Failed to format results with GPT-4o-mini: {e}")
-        return "⚠️ Error formatting the results."
+        gr.Markdown("# 🤖 GraphRAG-powered Neo4j Query System")
+        gr.Markdown("Enter a question about the meetup network, and get structured data from Neo4j!")
+        
+        query_input = gr.Textbox(label="Enter your natural language query")
+        submit_btn = gr.Button("Submit", variant="primary")
+        
+        with gr.Row():
+            json_output = gr.JSON(label="Structured JSON Output")
+        with gr.Row():
+            query_output = gr.Textbox(label="Generated Cypher Query", interactive=False)
+        with gr.Row():
+            table_output = gr.DataFrame(label="Query Results")
+        with gr.Row():
+            summary_output = gr.Textbox(label="Summary", interactive=False)
 
+        submit_btn.click(format_query_results, inputs=[query_input], outputs=[json_output, table_output, query_output, summary_output])
+ 
+    return demo
+
+app = build_interface()
+app.launch()
