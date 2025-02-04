@@ -374,14 +374,14 @@ SELECT * FROM groups LIMIT 5;
 SELECT * FROM events LIMIT 5;
 ```
 
-# **GraphRAG-powered Neo4j Query System - README**
+# **GraphRAG-powered Neo4j Query System**
 
-## **🚀 Getting Started**
+## **Getting Started**
 This repository provides a **GraphRAG-powered Neo4j query system** that allows users to **query Neo4j using natural language** and receive structured results in **JSON and tabular formats** via a **Gradio UI**.
 
 ---
 
-## **🛠Setup & Installation**
+## **Setup & Installation**
 
 ### **1️⃣ Install Dependencies**
 Ensure you have **Python 3.10+** installed. Then, clone the repository and install the required packages:
