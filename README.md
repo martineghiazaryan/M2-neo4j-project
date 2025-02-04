@@ -373,3 +373,129 @@ SELECT * FROM members LIMIT 5;
 SELECT * FROM groups LIMIT 5;
 SELECT * FROM events LIMIT 5;
 ```
+
+# **GraphRAG-powered Neo4j Query System - README**
+
+## **🚀 Getting Started**
+This repository provides a **GraphRAG-powered Neo4j query system** that allows users to **query Neo4j using natural language** and receive structured results in **JSON and tabular formats** via a **Gradio UI**.
+
+---
+
+## **🛠Setup & Installation**
+
+### **1️⃣ Install Dependencies**
+Ensure you have **Python 3.10+** installed. Then, clone the repository and install the required packages:
+
+```bash
+git clone <repo>
+cd graphRAG
+pip install -r requirements.txt
+```
+
+### **2️⃣ Configure Neo4j Connection**
+- Make sure you have **Neo4j installed** and running.
+- Update your **config.py** file with your **Neo4j database credentials**:
+
+```python
+NEO4J_URI = "bolt://localhost:7687"
+NEO4J_USER = "neo4j"
+NEO4J_PASSWORD = "your_password"
+```
+
+### **3️⃣ Configure OpenAI API Key**
+- Add your **OpenAI API Key** inside a `.env` file:
+
+```bash
+OPENAI_API_KEY="your_openai_api_key"
+OPENAI_MODEL="gpt-4o-mini"
+```
+
+---
+
+## **▶Running the Application**
+To launch the Gradio UI, simply run:
+
+```bash
+python main.py
+```
+
+You should see an output similar to:
+
+```bash
+Running on local URL:  http://127.0.0.1:7860
+```
+
+Open this link in your browser to access the **GraphRAG-powered UI**.
+
+---
+
+## **How to Use**
+1️⃣ **Enter a natural language query** in the input field.  
+   Example:  
+   ```plaintext
+   Show me all members who have attended at least one event.
+   ```
+   
+2️⃣ Click **"Submit"** to process the query.  
+
+3️⃣ The system will:
+   - Convert the natural language query to a **Cypher query**.
+   - Run the Cypher query on **Neo4j**.
+   - Display the **JSON output** (structured result).
+   - Generate a **formatted table** of the results.
+
+4️⃣ Click **"Clear"** to reset the UI.
+
+---
+
+### **🔹 Basic Queries**
+1️⃣ **"List all members in the database."**  
+2️⃣ **"Show me all groups available in the network."**  
+3️⃣ **"Find all events that have taken place."**  
+4️⃣ **"Who are the organizers of each group?"**  
+5️⃣ **"Get all friendships between members."**  
+
+---
+
+### **🔹 Filtering Queries**
+6️⃣ **"Show me all members who have attended at least one event."**  
+7️⃣ **"Find all groups that have more than 500 members."**  
+8️⃣ **"List all events that happened in the last 6 months."**  
+9️⃣ **"Show groups that are related to Tech or Business categories."**  
+🔟 **"Find all members who have participated in at least 3 groups."**  
+
+---
+
+### **🔹 Relationship-Based Queries**
+1️⃣1️⃣ **"Which members are friends with each other?"**  
+1️⃣2️⃣ **"Show me members who have attended the same event."**  
+1️⃣3️⃣ **"Find members who have participated in multiple groups together."**  
+1️⃣4️⃣ **"Get a list of members who are organizers of a group and also attend events."**  
+1️⃣5️⃣ **"Find groups that have overlapping members."**  
+
+---
+
+### **🔹 Advanced Queries**
+1️⃣6️⃣ **"Which group has the most members?"**  
+1️⃣7️⃣ **"Show me the top 5 most attended events."**  
+1️⃣8️⃣ **"Find the most connected member based on friendships."**  
+1️⃣9️⃣ **"List groups with similar categories to 'Sports & Recreation'."**  
+2️⃣0️⃣ **"Which events had the highest attendance?"**  
+
+---
+
+### **🔹 Complex Queries**
+2️⃣1️⃣ **"Find members who attended a Tech-related event and also belong to a Business group."**  
+2️⃣2️⃣ **"List groups where at least 50% of members have attended an event."**  
+
+
+## **Troubleshooting**
+**1️⃣ Gradio UI does not start?**  
+- Ensure **Neo4j is running** and your **config.py** credentials are correct.
+
+**2️⃣ No results found?**  
+- The dataset may not contain matching nodes. Try a **different query**.
+
+**3️⃣ OpenAI errors?**  
+- Ensure your **API key** is valid and has sufficient quota.
+
