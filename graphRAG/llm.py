@@ -72,7 +72,7 @@ def generate_cypher_query(nl_query, context):
 def generate_results_summary(results):
     try:
         results_str = json.dumps(results, indent=2)
-        prompt = f"Provide a short, concise summary of the following Neo4j query results:\n\n{results_str}\n\nSummary:"
+        prompt = f"Provide a short, concise summary and/or assumptions within the nashville meetup topic (not including summary or assumptions about the repetetive names or ids, its interesting to explain why that result is interesting) for the following Neo4j query results:\n\n{results_str}\n\nSummary:"
         response = openai_client.chat.completions.create(
             model=OPENAI_MODEL,
             messages=[
