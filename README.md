@@ -443,50 +443,43 @@ Open this link in your browser to access the **GraphRAG-powered UI**.
    - Run the Cypher query on **Neo4j**.
    - Display the **JSON output** (structured result).
    - Generate a **formatted table** of the results.
-
-4️⃣ Click **"Clear"** to reset the UI.
-
 ---
 
-### **🔹 Basic Queries**
-1️⃣ **"List all members in the database."**  
-2️⃣ **"Show me all groups available in the network."**  
-3️⃣ **"Find all events that have taken place."**  
-4️⃣ **"Who are the organizers of each group?"**  
-5️⃣ **"Get all friendships between members."**  
+### **🔹 Basic Queries** 
+ **"Show me all groups available in the network."**  
+ **"Find all events that have taken place."**  
+ **"Who are the organizers of each group?"**  
+ **"Get all friendships between members."**  
 
 ---
 
 ### **🔹 Filtering Queries**
-6️⃣ **"Show me all members who have attended at least one event."**  
-7️⃣ **"Find all groups that have more than 500 members."**  
-8️⃣ **"List all events that happened in the last 6 months."**  
-9️⃣ **"Show groups that are related to Tech or Business categories."**  
-🔟 **"Find all members who have participated in at least 3 groups."**  
+ **"Show me all members who have attended at least one event."**  
+ **"Find all groups that have more than 500 members."**  
+ **"Show groups that are related to Tech or Business categories."**  
+ **"Find all members who have participated in at least 3 groups."**  
 
 ---
 
 ### **🔹 Relationship-Based Queries**
-1️⃣1️⃣ **"Which members are friends with each other?"**  
-1️⃣2️⃣ **"Show me members who have attended the same event."**  
-1️⃣3️⃣ **"Find members who have participated in multiple groups together."**  
-1️⃣4️⃣ **"Get a list of members who are organizers of a group and also attend events."**  
-1️⃣5️⃣ **"Find groups that have overlapping members."**  
+ **"Which members are friends with each other?"**  
+ **"Show me members who have attended the same event."**  
+ **"Find members who have participated in multiple groups together."**  
+ **"Find groups that have overlapping members."**  
 
 ---
 
 ### **🔹 Advanced Queries**
-1️⃣6️⃣ **"Which group has the most members?"**  
-1️⃣7️⃣ **"Show me the top 5 most attended events."**  
-1️⃣8️⃣ **"Find the most connected member based on friendships."**  
-1️⃣9️⃣ **"List groups with similar categories to 'Sports & Recreation'."**  
-2️⃣0️⃣ **"Which events had the highest attendance?"**  
+ **"Which group has the most members?"**  
+ **"Show me the top 5 most attended events."**  
+ **"Find the most connected member based on friendships."**  
+ **"List groups with similar categories to 'Sports & Recreation'."**  
+ **"Which events had the highest attendance?"**  
 
 ---
 
 ### **🔹 Complex Queries**
-2️⃣1️⃣ **"Find members who attended a Tech-related event and also belong to a Business group."**  
-2️⃣2️⃣ **"List groups where at least 50% of members have attended an event."**  
+ **"List groups where at least 50% of members have attended an event."**  
 
 
 ## **Troubleshooting**
